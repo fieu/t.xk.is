@@ -22,7 +22,7 @@ clean:
 .PHONY: test
 ## test: runs go test with default values
 test:
-	go test -v -count=1 -race ./...
+	CGO_ENABLED=1 go test -v -count=1 -race ./...
 
 .PHONY: docker-build
 ## docker-build: builds the stringifier docker image to registry
