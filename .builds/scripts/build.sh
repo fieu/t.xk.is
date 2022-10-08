@@ -120,8 +120,8 @@ build_time() {
 	fi
 }
 
-rm -rf "$SCRIPT_DIR/../../build" || true
-mkdir -p "$SCRIPT_DIR/../../build"
+rm -rf "$SCRIPT_DIR/../../dist" || true
+mkdir -p "$SCRIPT_DIR/../../dist"
 
 x=1
 start_time="$(date -u +%s)"
@@ -163,7 +163,7 @@ for platform in "${platforms[@]}"; do
     flags+=" -H=windowsgui"
   fi
   flags+="'"
-  eval CGO_ENABELD=0 GOOS="$GOOS" GOARCH="$GOARCH" "$extra_flags" "$GO_BINARY" build "$tags" "$flags" -o "build/$output_name" "$SCRIPT_DIR/../.."
+  eval CGO_ENABELD=0 GOOS="$GOOS" GOARCH="$GOARCH" "$extra_flags" "$GO_BINARY" build "$tags" "$flags" -o "dist/$output_name" "$SCRIPT_DIR/../.."
 	platform_end_time="$(date -u +%s)"
 	platform_elapsed="$(("$platform_end_time" - "$platform_start_time"))"
 	build_time "$platform_elapsed" "platform"
