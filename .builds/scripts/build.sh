@@ -142,7 +142,7 @@ for platform in "${platforms[@]}"; do
 	fi
 
 	platform_start_time="$(date -u +%s)"
-	echo -ne "${Purple}[${Blue}$(printf "%02d" $x)/${#platforms[@]}${Purple}]\t""$Cyan""Compiling binary for ""$Yellow""$GOOS/$GOARCH""$Cyan""...""$Reset"
+	echo -ne "${Blue}[${Purple}$(printf "%02d" $x)/${#platforms[@]}${Blue}]\t""$Cyan""Compiling binary for ""$Yellow""$GOOS/$GOARCH""$Cyan""...""$Reset"
 
   extra_flags=""
 	if [ "$GOARCH" = "386" ]; then
