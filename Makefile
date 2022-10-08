@@ -8,6 +8,10 @@ build: clean
 	@go build -v -o ${APP} ./...
 	@echo "Application \"${APP}\" built successfully."
 
+## dist: build the application for all supported targets
+dist:
+	@.builds/scripts/build.sh t.xk.is true false
+
 .PHONY: run
 ## run: runs go run main.go
 run:

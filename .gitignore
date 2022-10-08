@@ -6,6 +6,7 @@
 *.dylib
 tmp/
 t.xk.is
+build/
 
 # Test binary, built with `go test -c`
 *.test
