@@ -156,13 +156,6 @@ for platform in "${platforms[@]}"; do
 	echo -ne "${Blue}[${Purple}$(printf "%02d" $x)/${#platforms[@]}${Blue}]\t""$Cyan""Compiling binary for ""$Yellow""$GOOS/$GOARCH""$Cyan""...""$Reset"
 
 	extra_flags=""
-	# if [ "$GOARCH" = "386" ]; then
-	# 	extra_flags="GO386=softfloat"
-	# elif [ "$GOARCH" = "mips" ]; then
-	# 	extra_flags="GOMIPS=softfloat"
-	# elif [ "$GOARCH" = "mipsle" ]; then
-	# 	extra_flags="GOMIPS=softfloat"
-	# fi
 	tags=""
 	flags="-ldflags='-s -w"
 	if [ "$GOOS" = "linux" ] || [ "$GOOS" = "freebsd" ] || [ "$GOOS" = "netbsd" ] || [ "$GOOS" = "dragonfly" ] || [ "$GOOS" = "plan9" ] || [ "$GOOS" = "openbsd" ] || [ "$GOOS" = "windows" ]; then
