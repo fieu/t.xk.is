@@ -2,7 +2,7 @@
 
 # Supported platforms
 platforms=(
-  "aix/ppc64"
+	"aix/ppc64"
 	"darwin/amd64"
 	"darwin/arm64"
 	"dragonfly/amd64"
@@ -22,15 +22,15 @@ platforms=(
 	"linux/mips64"
 	"linux/mips64le"
 	"linux/riscv64"
-  "linux/s390x"
+	"linux/s390x"
 	"netbsd/386"
 	"netbsd/amd64"
 	"netbsd/arm"
 	"openbsd/386"
-  "openbsd/amd64"
-  "openbsd/arm"
-  "openbsd/arm64"
-  "openbsd/mips64"
+	"openbsd/amd64"
+	"openbsd/arm"
+	"openbsd/arm64"
+	"openbsd/mips64"
 	"plan9/386"
 	"plan9/amd64"
 	"plan9/arm"
@@ -51,8 +51,8 @@ Blue='\e[0;34m'   # Blue
 Purple='\e[0;35m' # Purple
 Cyan='\e[0;36m'   # Cyan
 # shellcheck disable=SC2034
-White='\e[0;37m'  # White
-Reset='\e[0m' # Text Reset
+White='\e[0;37m' # White
+Reset='\e[0m'    # Text Reset
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
@@ -64,43 +64,43 @@ SHOULD_HIDE_WINDOWS_CONSOLE="$3"
 
 # If all arguments aren't set, exit 1 and print usage
 if [ -z "$PROGRAM_NAME" ] || [ -z "$SHOULD_GARBLE" ] || [ -z "$SHOULD_HIDE_WINDOWS_CONSOLE" ]; then
-  echo -ne "Usage: ${Yellow}$0${Reset} ${Cyan}<program_name> <should_garble> <should_hide_windows_console>${Reset}\n"
-  # shellcheck disable=SC2059
-  printf "\t${Cyan}program_name${Reset} ${Blue}(string)${Reset} - The name of the program to build\n"
-  # shellcheck disable=SC2059
-  printf "\t${Cyan}should_garble${Reset} ${Blue}(boolean)${Reset} - Whether or not to garble the program\n"
-  # shellcheck disable=SC2059
-  printf "\t${Cyan}should_hide_windows_console${Reset} ${Blue}(boolean)${Reset} - Whether or not to hide the windows console\n"
-  # Example in grey color
-  echo -ne "Example: ${Yellow}$0${Reset} ${Cyan}myprogram true true${Reset}\n"
-  exit 1
+	echo -ne "Usage: ${Yellow}$0${Reset} ${Cyan}<program_name> <should_garble> <should_hide_windows_console>${Reset}\n"
+	# shellcheck disable=SC2059
+	printf "\t${Cyan}program_name${Reset} ${Blue}(string)${Reset} - The name of the program to build\n"
+	# shellcheck disable=SC2059
+	printf "\t${Cyan}should_garble${Reset} ${Blue}(boolean)${Reset} - Whether or not to garble the program\n"
+	# shellcheck disable=SC2059
+	printf "\t${Cyan}should_hide_windows_console${Reset} ${Blue}(boolean)${Reset} - Whether or not to hide the windows console\n"
+	# Example in grey color
+	echo -ne "Example: ${Yellow}$0${Reset} ${Cyan}myprogram true true${Reset}\n"
+	exit 1
 fi
 
 if [ "$SHOULD_GARBLE" = "true" ]; then
-  GO_BINARY="garble -literals -tiny -seed random"
+	GO_BINARY="garble -literals -tiny -seed random"
 else
-  GO_BINARY="go"
+	GO_BINARY="go"
 fi
 
 # Explain all program arguments to user before program initialization, check if enabled, cross if not
 echo -ne "${Blue}1.${Reset} Program name: ${Yellow}$PROGRAM_NAME${Reset}\n"
 if [ "$SHOULD_GARBLE" = "true" ]; then
-  echo -ne "${Blue}2.${Reset} Should garble: ${Green}true${Reset}\n"
+	echo -ne "${Blue}2.${Reset} Should garble: ${Green}true${Reset}\n"
 else
-  echo -ne "${Blue}2.${Reset} Should garble: ${Red}false${Reset}\n"
+	echo -ne "${Blue}2.${Reset} Should garble: ${Red}false${Reset}\n"
 fi
 if [ "$SHOULD_HIDE_WINDOWS_CONSOLE" = "true" ]; then
-  echo -ne "${Blue}3.${Reset} Should hide windows console: ${Green}true${Reset}\n"
+	echo -ne "${Blue}3.${Reset} Should hide windows console: ${Green}true${Reset}\n"
 else
-  echo -ne "${Blue}3.${Reset} Should hide windows console: ${Red}false${Reset}\n"
+	echo -ne "${Blue}3.${Reset} Should hide windows console: ${Red}false${Reset}\n"
 fi
 
 # Check if the "garble" command exists
 if [ "$SHOULD_GARBLE" = "true" ]; then
-  if ! command -v garble &> /dev/null; then
-    echo -ne "${Red}garble${Reset} could not be found. Please install it with ${Yellow}go install mvdan.cc/garble@latest${Reset}\n"
-    exit 1
-  fi
+	if ! command -v garble &>/dev/null; then
+		echo -ne "${Red}garble${Reset} could not be found. Please install it with ${Yellow}go install mvdan.cc/garble@latest${Reset}\n"
+		exit 1
+	fi
 fi
 
 build_time() {
@@ -127,7 +127,7 @@ x=1
 start_time="$(date -u +%s)"
 revision="$(git describe --tags 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
 if [[ -z ${revision} ]]; then
-  revision="unknown"
+	revision="unknown"
 fi
 
 for platform in "${platforms[@]}"; do
@@ -144,26 +144,26 @@ for platform in "${platforms[@]}"; do
 	platform_start_time="$(date -u +%s)"
 	echo -ne "${Blue}[${Purple}$(printf "%02d" $x)/${#platforms[@]}${Blue}]\t""$Cyan""Compiling binary for ""$Yellow""$GOOS/$GOARCH""$Cyan""...""$Reset"
 
-  extra_flags=""
+	extra_flags=""
 	if [ "$GOARCH" = "386" ]; then
-	  extra_flags="GO386=softfloat"
+		extra_flags="GO386=softfloat"
 	elif [ "$GOARCH" = "mips" ]; then
-	  extra_flags="GOMIPS=softfloat"
+		extra_flags="GOMIPS=softfloat"
 	elif [ "$GOARCH" = "mipsle" ]; then
-	  extra_flags="GOMIPS=softfloat"
+		extra_flags="GOMIPS=softfloat"
 	fi
 	tags=""
 	flags="-ldflags='-s -w"
 	if [ "$GOOS" = "linux" ] || [ "$GOOS" = "freebsd" ] || [ "$GOOS" = "netbsd" ] || [ "$GOOS" = "dragonfly" ] || [ "$GOOS" = "plan9" ] || [ "$GOOS" = "openbsd" ] || [ "$GOOS" = "windows" ]; then
-	  flags+=" -extldflags \"-static\""
-	  tags="-tags netgo"
-  fi
-  # Hide windows console if need be
-  if [ "$GOOS" = "windows" ] && [ "$SHOULD_HIDE_WINDOWS_CONSOLE" = "true" ]; then
-    flags+=" -H=windowsgui"
-  fi
-  flags+="'"
-  eval CGO_ENABELD=0 GOOS="$GOOS" GOARCH="$GOARCH" "$extra_flags" "$GO_BINARY" build "$tags" "$flags" -o "dist/$output_name" "$SCRIPT_DIR/../.."
+		flags+=" -extldflags \"-static\""
+		tags="-tags netgo"
+	fi
+	# Hide windows console if need be
+	if [ "$GOOS" = "windows" ] && [ "$SHOULD_HIDE_WINDOWS_CONSOLE" = "true" ]; then
+		flags+=" -H=windowsgui"
+	fi
+	flags+="'"
+	eval CGO_ENABELD=0 GOOS="$GOOS" GOARCH="$GOARCH" "$extra_flags" "$GO_BINARY" build "$tags" "$flags" -o "dist/$output_name" "$SCRIPT_DIR/../.."
 	platform_end_time="$(date -u +%s)"
 	platform_elapsed="$(("$platform_end_time" - "$platform_start_time"))"
 	build_time "$platform_elapsed" "platform"
