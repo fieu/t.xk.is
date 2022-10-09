@@ -170,7 +170,7 @@ for platform in "${platforms[@]}"; do
 	if [ "$SHOULD_GARBLE" = "true" ]; then
 		flags+=" -buildvcs=false -trimpath"
 	fi
-	eval CGO_ENABELD=0 GOOS="$GOOS" GOARCH="$GOARCH" "$extra_flags" "$GO_BINARY" build "$tags" "$flags" -o "dist/$output_name" "$SCRIPT_DIR/../.."
+	eval CGO_ENABLED="0" GOOS="$GOOS" GOARCH="$GOARCH" "$extra_flags" "$GO_BINARY" build "$tags" "$flags" -o "dist/$output_name" "$SCRIPT_DIR/../.."
 	platform_end_time="$(date -u +%s)"
 	platform_elapsed="$(("$platform_end_time" - "$platform_start_time"))"
 	build_time "$platform_elapsed" "platform" "dist/$output_name"
