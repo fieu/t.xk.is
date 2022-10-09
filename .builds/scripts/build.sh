@@ -103,6 +103,17 @@ if [ "$SHOULD_GARBLE" = "true" ]; then
 	fi
 fi
 
+calculate_file_size_in_mb() {
+	# if on macOS, use gdu, otherwise use du
+	if command -v gdu &>/dev/null; then
+		file_size="$(gdu -b "$1" | cut -f1)"
+	else
+		file_size="$(du -b "$1" | cut -f1)"
+	fi
+	file_size_mb=$(echo "scale=2; ${file_size}/1024/1024" | bc)
+	echo -ne "$file_size_mb"
+}
+
 build_time() {
 	if [[ -z ${1} || ${1} -lt 60 ]]; then
 		min=0
@@ -114,7 +125,7 @@ build_time() {
 		secs=$(echo "${secs}"*60 | bc | awk '{print int($1+0.5)}')
 	fi
 	if [[ "$2" = "platform" ]]; then
-		echo -ne "$Blue""\t(""$Cyan""${secs}""$Blue""s)""$Reset""\n"
+		echo -ne "$Blue""\t(""$Cyan""${secs}""$Blue""s)""$Reset""\t" "${Cyan}$(calculate_file_size_in_mb "${3}")""$Blue"" MB""$Reset""\n"
 	else
 		echo -e "$Blue""Time elapsed: ""$Cyan""${min}""$Blue"" minutes and ""$Cyan""${secs}""$Blue"" seconds."
 	fi
@@ -145,13 +156,13 @@ for platform in "${platforms[@]}"; do
 	echo -ne "${Blue}[${Purple}$(printf "%02d" $x)/${#platforms[@]}${Blue}]\t""$Cyan""Compiling binary for ""$Yellow""$GOOS/$GOARCH""$Cyan""...""$Reset"
 
 	extra_flags=""
-	if [ "$GOARCH" = "386" ]; then
-		extra_flags="GO386=softfloat"
-	elif [ "$GOARCH" = "mips" ]; then
-		extra_flags="GOMIPS=softfloat"
-	elif [ "$GOARCH" = "mipsle" ]; then
-		extra_flags="GOMIPS=softfloat"
-	fi
+	# if [ "$GOARCH" = "386" ]; then
+	# 	extra_flags="GO386=softfloat"
+	# elif [ "$GOARCH" = "mips" ]; then
+	# 	extra_flags="GOMIPS=softfloat"
+	# elif [ "$GOARCH" = "mipsle" ]; then
+	# 	extra_flags="GOMIPS=softfloat"
+	# fi
 	tags=""
 	flags="-ldflags='-s -w"
 	if [ "$GOOS" = "linux" ] || [ "$GOOS" = "freebsd" ] || [ "$GOOS" = "netbsd" ] || [ "$GOOS" = "dragonfly" ] || [ "$GOOS" = "plan9" ] || [ "$GOOS" = "openbsd" ] || [ "$GOOS" = "windows" ]; then
@@ -163,10 +174,13 @@ for platform in "${platforms[@]}"; do
 		flags+=" -H=windowsgui"
 	fi
 	flags+="'"
+	if [ "$SHOULD_GARBLE" = "true" ]; then
+		flags+=" -buildvcs=false -trimpath"
+	fi
 	eval CGO_ENABELD=0 GOOS="$GOOS" GOARCH="$GOARCH" "$extra_flags" "$GO_BINARY" build "$tags" "$flags" -o "dist/$output_name" "$SCRIPT_DIR/../.."
 	platform_end_time="$(date -u +%s)"
 	platform_elapsed="$(("$platform_end_time" - "$platform_start_time"))"
-	build_time "$platform_elapsed" "platform"
+	build_time "$platform_elapsed" "platform" "dist/$output_name"
 
 	# shellcheck disable=SC2181
 	if [ $? -ne 0 ]; then
