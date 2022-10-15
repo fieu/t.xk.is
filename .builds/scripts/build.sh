@@ -174,7 +174,7 @@ replace_words_in_filename() {
 	for i in "${!words[@]}"; do
 		filename="${filename//${words[$i]}/${replacements[$i]}}"
 	done
-	mv "$original_path" "$filename"
+	echo -ne "$filename"
 }
 
 x=1
@@ -218,7 +218,27 @@ for platform in "${platforms[@]}"; do
 	platform_elapsed="$(("$platform_end_time" - "$platform_start_time"))"
 	build_time "$platform_elapsed" "platform" "dist/$output_name"
 
-	replace_words_in_filename "dist/$output_name" "${words[@]}" "${replacements[@]}"
+  # Rename it with more friendly naming convention
+	new_name="$(replace_words_in_filename "$output_name")"
+	mv "dist/$output_name" "dist/$new_name"
+
+	# Compress at maximum level the file into a .tar.gz file, however if it's a Windows .exe file, make it a .zip file. Use 7zip
+	# if it's available, otherwise use tar.
+	if [ "$GOOS" = "windows" ]; then
+    if command -v 7z &>/dev/null; then
+      7z a -mx=9 -tzip "dist/$new_name.zip" "dist/$new_name"
+    else
+      GZIP=-9 tar -czf "dist/$new_name.zip" "dist/$new_name"
+    fi
+    rm "dist/$new_name"
+  else
+    if command -v 7z &>/dev/null; then
+      7z a -mx=9 -ttar "dist/$new_name.tar.gz" "dist/$new_name"
+    else
+      GZIP=-9 tar -czf "dist/$new_name.tar.gz" "dist/$new_name"
+    fi
+    rm "dist/$new_name"
+  fi
 
 	# shellcheck disable=SC2181
 	if [ $? -ne 0 ]; then
