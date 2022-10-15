@@ -134,6 +134,49 @@ build_time() {
 rm -rf "$SCRIPT_DIR/../../dist" || true
 mkdir -p "$SCRIPT_DIR/../../dist"
 
+# Given a list of words and their replacements, replace words in a filename
+# $1: filename
+# $2: list of words to replace
+# $3: list of replacements
+replace_words_in_filename() {
+	filename="$1"
+	original_path="$filename"
+
+	words=(
+		"amd64"
+		"386"
+		"linux"
+		"openbsd"
+		"freebsd"
+		"netbsd"
+		"solaris"
+		"plan9"
+		"dragonfly"
+		"aix"
+		"darwin"
+		"windows"
+	)
+
+	replacements=(
+		"x86_64"
+		"x86"
+		"Linux"
+		"OpenBSD"
+		"FreeBSD"
+		"NetBSD"
+		"Solaris"
+		"Plan9"
+		"DragonFly"
+		"AIX"
+		"macOS"
+		"Windows"
+	)
+	for i in "${!words[@]}"; do
+		filename="${filename//${words[$i]}/${replacements[$i]}}"
+	done
+	mv "$original_path" "$filename"
+}
+
 x=1
 start_time="$(date -u +%s)"
 revision="$(git describe --tags 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
@@ -174,6 +217,8 @@ for platform in "${platforms[@]}"; do
 	platform_end_time="$(date -u +%s)"
 	platform_elapsed="$(("$platform_end_time" - "$platform_start_time"))"
 	build_time "$platform_elapsed" "platform" "dist/$output_name"
+
+	replace_words_in_filename "dist/$output_name" "${words[@]}" "${replacements[@]}"
 
 	# shellcheck disable=SC2181
 	if [ $? -ne 0 ]; then
