@@ -140,7 +140,6 @@ mkdir -p "$SCRIPT_DIR/../../dist"
 # $3: list of replacements
 replace_words_in_filename() {
 	filename="$1"
-	original_path="$filename"
 
 	words=(
 		"amd64"
