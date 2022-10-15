@@ -5,7 +5,7 @@ COMMIT_SHA=$(shell git rev-parse --short HEAD)
 ## build: build the application
 build: clean
 	@echo "Building..."
-	@go build -v -o ${APP} ./...
+	@CGO_ENABLED=0 go build -v -o ${APP} ./...
 	@echo "Application \"${APP}\" built successfully."
 
 ## dist: build the application for all supported targets
