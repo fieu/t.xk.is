@@ -225,16 +225,16 @@ for platform in "${platforms[@]}"; do
 	# if it's available, otherwise use tar.
 	if [ "$GOOS" = "windows" ]; then
     if command -v 7z &>/dev/null; then
-      7z a -mx=9 -tzip "dist/$new_name.zip" "dist/$new_name"
+      7z a -mx=9 -tzip "dist/$new_name.zip" "dist/$new_name" &>/dev/null
     else
-      GZIP=-9 tar -czf "dist/$new_name.zip" "dist/$new_name"
+      GZIP=-9 tar -czf "dist/$new_name.zip" "dist/$new_name" &>/dev/null
     fi
     rm "dist/$new_name"
   else
     if command -v 7z &>/dev/null; then
-      7z a -mx=9 -ttar "dist/$new_name.tar.gz" "dist/$new_name"
+      7z a -mx=9 -ttar "dist/$new_name.tar.gz" "dist/$new_name" &>/dev/null
     else
-      GZIP=-9 tar -czf "dist/$new_name.tar.gz" "dist/$new_name"
+      GZIP=-9 tar -czf "dist/$new_name.tar.gz" "dist/$new_name" &>/dev/null
     fi
     rm "dist/$new_name"
   fi
