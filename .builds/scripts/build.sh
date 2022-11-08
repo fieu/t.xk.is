@@ -221,22 +221,37 @@ for platform in "${platforms[@]}"; do
 	new_name="$(replace_words_in_filename "$output_name")"
 	mv "dist/$output_name" "dist/$new_name"
 
+	# If the directory dist/compressed doesn't exist, create it
+	if [ ! -d "dist/compressed" ]; then
+    mkdir -p "dist/compressed"
+  fi
+
 	# Compress at maximum level the file into a .tar.gz file, however if it's a Windows .exe file, make it a .zip file. Use 7zip
 	# if it's available, otherwise use tar.
 	if [ "$GOOS" = "windows" ]; then
     if command -v 7z &>/dev/null; then
-      7z a -mx=9 -tzip "dist/$new_name.zip" "dist/$new_name" &>/dev/null
+      cd "dist" || exit 1
+      7z a -mx=9 -tzip "compressed/${new_name%.exe}.zip" "$new_name" &>/dev/null
+      cd ..
     else
-      GZIP=-9 tar -czf "dist/$new_name.zip" "dist/$new_name" &>/dev/null
+      cd "dist" || exit 1
+      zip -9 -q "compressed/${new_name%.exe}.zip" "$new_name"
+      cd ..
     fi
-    rm "dist/$new_name"
+    # Delete file before compress
+#    rm "dist/$new_name"
   else
     if command -v 7z &>/dev/null; then
-      7z a -mx=9 -ttar "dist/$new_name.tar.gz" "dist/$new_name" &>/dev/null
+      cd "dist" || exit 1
+      7z a -mx=9 -ttar "compressed/$new_name.tar.gz" "$new_name" &>/dev/null
+      cd ..
     else
-      GZIP=-9 tar -czf "dist/$new_name.tar.gz" "dist/$new_name" &>/dev/null
+      cd "dist" || exit 1
+      GZIP=-9 tar -czf "compressed/$new_name.tar.gz" "$new_name" &>/dev/null
+      cd ..
     fi
-    rm "dist/$new_name"
+    # Delete file before compress
+#    rm "dist/$new_name"
   fi
 
 	# shellcheck disable=SC2181
