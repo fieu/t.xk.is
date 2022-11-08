@@ -90,9 +90,9 @@ else
 	echo -ne "${Blue}2.${Reset} Should garble: ${Red}false${Reset}\n"
 fi
 if [ "$SHOULD_HIDE_WINDOWS_CONSOLE" = "true" ]; then
-	echo -ne "${Blue}3.${Reset} Should hide windows console: ${Green}true${Reset}\n"
+	echo -ne "${Blue}3.${Reset} Should hide Windows console: ${Green}true${Reset}\n"
 else
-	echo -ne "${Blue}3.${Reset} Should hide windows console: ${Red}false${Reset}\n"
+	echo -ne "${Blue}3.${Reset} Should hide Windows console: ${Red}false${Reset}\n"
 fi
 
 # Check if the "garble" command exists
@@ -244,7 +244,7 @@ for platform in "${platforms[@]}"; do
     if command -v 7z &>/dev/null; then
       cd "dist" || exit 1
       7z a -mx=9 -ttar "compressed/$new_name.tar.gz" "$new_name" &>/dev/null
-      cd ..
+      cd ./
     else
       cd "dist" || exit 1
       GZIP=-9 tar -czf "compressed/$new_name.tar.gz" "$new_name" &>/dev/null
